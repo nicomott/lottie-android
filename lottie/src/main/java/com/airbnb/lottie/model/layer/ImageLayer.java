@@ -21,8 +21,6 @@ import com.airbnb.lottie.value.LottieValueCallback;
 public class ImageLayer extends BaseLayer {
 
   private final Paint paint = new LPaint(Paint.ANTI_ALIAS_FLAG | Paint.FILTER_BITMAP_FLAG);
-  private final Rect src = new Rect();
-  private final Rect dst = new Rect();
   @Nullable private BaseKeyframeAnimation<ColorFilter, ColorFilter> colorFilterAnimation;
 
   ImageLayer(LottieDrawable lottieDrawable, Layer layerModel) {
@@ -34,7 +32,6 @@ public class ImageLayer extends BaseLayer {
     if (bitmap == null || bitmap.isRecycled()) {
       return;
     }
-    float density = Utils.dpScale();
 
     paint.setAlpha(parentAlpha);
     if (colorFilterAnimation != null) {
@@ -42,9 +39,7 @@ public class ImageLayer extends BaseLayer {
     }
     canvas.save();
     canvas.concat(parentMatrix);
-    src.set(0, 0, bitmap.getWidth(), bitmap.getHeight());
-    dst.set(0, 0, (int) (bitmap.getWidth() * density), (int) (bitmap.getHeight() * density));
-    canvas.drawBitmap(bitmap, src, dst , paint);
+    canvas.drawBitmap(bitmap, 0, 0, paint);
     canvas.restore();
   }
 
@@ -52,7 +47,7 @@ public class ImageLayer extends BaseLayer {
     super.getBounds(outBounds, parentMatrix, applyParents);
     Bitmap bitmap = getBitmap();
     if (bitmap != null) {
-      outBounds.set(0, 0, bitmap.getWidth() * Utils.dpScale(), bitmap.getHeight() * Utils.dpScale());
+      outBounds.set(0, 0, bitmap.getWidth(), bitmap.getHeight());
       boundsMatrix.mapRect(outBounds);
     }
   }
